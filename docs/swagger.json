@@ -1,0 +1,20 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API pública de datos de países y ciudades.",
+        "title": "Open Data API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Angel Lengua",
+            "email": "tuemail@ejemplo.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {}
+}

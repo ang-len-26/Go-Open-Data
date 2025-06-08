@@ -11,5 +11,6 @@ func RegisterRoutes(r *gin.Engine) {
 	api := r.Group("/api/v1")
 	{
 		api.GET("/", controllers.GetPublicData)
+		api.GET("/countries", controllers.GetCountries)
 	}
 }

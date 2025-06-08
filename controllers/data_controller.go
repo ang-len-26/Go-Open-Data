@@ -9,6 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetCountries godoc
+// @Summary      Lista de países
+// @Description  Obtiene una lista de países con filtros y paginación
+// @Tags         Países
+// @Accept       json
+// @Produce      json
+// @Param        region     query     string  false  "Filtrar por región"
+// @Param        limit      query     int     false  "Número máximo de resultados"
+// @Param        offset     query     int     false  "Número de resultados a omitir"
+// @Success      200  {array}  models.Country
+// @Failure      500  {object}  map[string]string
+// @Router       /countries [get]
+
 func GetPublicData(c *gin.Context) {
 	rows, err := config.DB.Query(context.Background(), "SELECT id, name, country, population, latitude, longitude FROM cities")
 	if err != nil {
