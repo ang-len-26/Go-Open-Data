@@ -9,20 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetCountries godoc
-// @Summary      Obtener lista de países
-// @Description  Retorna una lista de países con filtros opcionales por región, subregión, y paginación
-// @Tags         Countries
-// @Accept       json
-// @Produce      json
-// @Param        region     query     string  false  "Filtrar por región (ej: Asia)"
-// @Param        subregion  query     string  false  "Filtrar por subregión (ej: South-Eastern Asia)"
-// @Param        page       query     int     false  "Número de página"
-// @Param        limit      query     int     false  "Resultados por página"
-// @Success      200  {array}  models.Country
-// @Failure      500  {object}  map[string]string
-// @Router       /api/v1/countries [get]
-
 func GetCountries(c *gin.Context) {
 	// Obtener parámetros de consulta
 	region := c.Query("region")
@@ -82,8 +68,8 @@ func GetCountries(c *gin.Context) {
 	for rows.Next() {
 		var country models.Country
 		if err := rows.Scan(
-			&country.ID, &country.Name, &country.Capital, &country.Region,
-			&country.Subregion, &country.Population, &country.Area,
+			&country.ID, &country.Name, &country.Capital, &country.RegionID,
+			&country.SubregionID, &country.Population, &country.Area,
 		); err != nil {
 			continue
 		}
