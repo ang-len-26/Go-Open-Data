@@ -1,11 +1,9 @@
-import CountryTable from "./components/CountryTable";
+import AppRouter from "./routes/AppRouter";
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <CountryTable />
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <AppRouter />
     </div>
   );
 }
-
-export default App;
