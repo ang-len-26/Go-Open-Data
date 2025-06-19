@@ -9,7 +9,11 @@ import (
 )
 
 func GetRegions(c *gin.Context) {
-	rows, err := config.DB.Query(c.Request.Context(), `SELECT id, name FROM regions ORDER BY name ASC`)
+	rows, err := config.DB.Query(c.Request.Context(), `
+		SELECT id, name 
+		FROM regions 
+		ORDER BY name ASC
+	`)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener regiones"})
 		return
@@ -18,13 +22,16 @@ func GetRegions(c *gin.Context) {
 
 	var regions []models.Region
 	for rows.Next() {
-		var r models.Region
-		if err := rows.Scan(&r.ID, &r.Name); err == nil {
-			regions = append(regions, r)
+		var region models.Region
+		if err := rows.Scan(&region.ID, &region.Name); err == nil {
+			regions = append(regions, region)
 		}
 	}
 
-	c.JSON(http.StatusOK, regions)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  regions,
+		"total": len(regions),
+	})
 }
 
 func GetCountriesByRegion(c *gin.Context) {
@@ -47,11 +54,14 @@ func GetCountriesByRegion(c *gin.Context) {
 
 	var countries []models.Country
 	for rows.Next() {
-		var c models.Country
-		if err := rows.Scan(&c.ID, &c.Name, &c.Capital, &c.Population, &c.Area); err == nil {
-			countries = append(countries, c)
+		var country models.Country
+		if err := rows.Scan(&country.ID, &country.Name, &country.Capital, &country.Population, &country.Area); err == nil {
+			countries = append(countries, country)
 		}
 	}
 
-	c.JSON(http.StatusOK, countries)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  countries,
+		"total": len(countries),
+	})
 }

@@ -9,7 +9,11 @@ import (
 )
 
 func GetSubregions(c *gin.Context) {
-	rows, err := config.DB.Query(c.Request.Context(), `SELECT id, name FROM subregions ORDER BY name ASC`)
+	rows, err := config.DB.Query(c.Request.Context(), `
+		SELECT id, name 
+		FROM subregions 
+		ORDER BY name ASC
+	`)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener subregiones"})
 		return
@@ -18,13 +22,16 @@ func GetSubregions(c *gin.Context) {
 
 	var subregions []models.Subregion
 	for rows.Next() {
-		var s models.Subregion
-		if err := rows.Scan(&s.ID, &s.Name); err == nil {
-			subregions = append(subregions, s)
+		var subregion models.Subregion
+		if err := rows.Scan(&subregion.ID, &subregion.Name); err == nil {
+			subregions = append(subregions, subregion)
 		}
 	}
 
-	c.JSON(http.StatusOK, subregions)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  subregions,
+		"total": len(subregions),
+	})
 }
 
 func GetCountriesBySubregion(c *gin.Context) {
@@ -47,11 +54,14 @@ func GetCountriesBySubregion(c *gin.Context) {
 
 	var countries []models.Country
 	for rows.Next() {
-		var c models.Country
-		if err := rows.Scan(&c.ID, &c.Name, &c.Capital, &c.Population, &c.Area); err == nil {
-			countries = append(countries, c)
+		var country models.Country
+		if err := rows.Scan(&country.ID, &country.Name, &country.Capital, &country.Population, &country.Area); err == nil {
+			countries = append(countries, country)
 		}
 	}
 
-	c.JSON(http.StatusOK, countries)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  countries,
+		"total": len(countries),
+	})
 }

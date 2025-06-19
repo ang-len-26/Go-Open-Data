@@ -9,9 +9,14 @@ import (
 )
 
 func GetLanguages(c *gin.Context) {
-	rows, err := config.DB.Query(c, "SELECT id, name, native_name, iso_code FROM languages ORDER BY name ASC")
+	query := `
+		SELECT id, name, native_name, iso_code
+		FROM languages
+		ORDER BY name ASC
+	`
+	rows, err := config.DB.Query(c.Request.Context(), query)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los idiomas"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los idiomas", "details": err.Error()})
 		return
 	}
 	defer rows.Close()
@@ -25,18 +30,25 @@ func GetLanguages(c *gin.Context) {
 		languages = append(languages, lang)
 	}
 
-	c.JSON(http.StatusOK, languages)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  languages,
+		"total": len(languages),
+	})
 }
 
 func GetLanguageByISO(c *gin.Context) {
 	iso := c.Param("iso")
 
 	var lang models.Language
-	err := config.DB.QueryRow(c, `
+	query := `
 		SELECT id, name, native_name, iso_code
 		FROM languages
 		WHERE iso_code = $1
-	`, iso).Scan(&lang.ID, &lang.Name, &lang.NativeName, &lang.ISOCode)
+	`
+
+	err := config.DB.QueryRow(c.Request.Context(), query, iso).Scan(
+		&lang.ID, &lang.Name, &lang.NativeName, &lang.ISOCode,
+	)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Idioma no encontrado"})
@@ -49,17 +61,18 @@ func GetLanguageByISO(c *gin.Context) {
 func GetCountriesByLanguage(c *gin.Context) {
 	iso := c.Param("iso")
 
-	rows, err := config.DB.Query(c, `
-		SELECT countries.id, countries.name, countries.capital, countries.population, countries.area
-		FROM countries
-		JOIN country_languages ON countries.id = country_languages.country_id
-		JOIN languages ON country_languages.language_id = languages.id
-		WHERE languages.iso_code = $1
-		ORDER BY countries.name ASC
-	`, iso)
+	query := `
+		SELECT c.id, c.name, c.capital, c.population, c.area
+		FROM countries c
+		JOIN country_languages cl ON c.id = cl.country_id
+		JOIN languages l ON cl.language_id = l.id
+		WHERE l.iso_code = $1
+		ORDER BY c.name ASC
+	`
 
+	rows, err := config.DB.Query(c.Request.Context(), query, iso)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los países"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los países", "details": err.Error()})
 		return
 	}
 	defer rows.Close()
@@ -67,11 +80,13 @@ func GetCountriesByLanguage(c *gin.Context) {
 	var countries []models.Country
 	for rows.Next() {
 		var country models.Country
-		if err := rows.Scan(&country.ID, &country.Name, &country.Capital, &country.Population, &country.Area); err != nil {
-			continue
+		if err := rows.Scan(&country.ID, &country.Name, &country.Capital, &country.Population, &country.Area); err == nil {
+			countries = append(countries, country)
 		}
-		countries = append(countries, country)
 	}
 
-	c.JSON(http.StatusOK, countries)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  countries,
+		"total": len(countries),
+	})
 }

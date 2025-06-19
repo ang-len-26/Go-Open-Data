@@ -94,17 +94,16 @@ func GetCountryByID(c *gin.Context) {
 }
 
 func GetCitiesByCountry(c *gin.Context) {
-	idParam := c.Param("id")
-	countryID, err := strconv.Atoi(idParam)
+	countryID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
 		return
 	}
 
 	query := `
-		SELECT id, name, population, latitude, longitude 
-		FROM cities 
-		WHERE country_id = $1 
+		SELECT id, name, population, latitude, longitude
+		FROM cities
+		WHERE country_id = $1
 		ORDER BY population DESC
 	`
 
@@ -118,18 +117,19 @@ func GetCitiesByCountry(c *gin.Context) {
 	var cities []models.City
 	for rows.Next() {
 		var city models.City
-		err := rows.Scan(&city.ID, &city.Name, &city.Population, &city.Latitude, &city.Longitude)
-		if err == nil {
+		if err := rows.Scan(&city.ID, &city.Name, &city.Population, &city.Latitude, &city.Longitude); err == nil {
 			cities = append(cities, city)
 		}
 	}
 
-	c.JSON(http.StatusOK, cities)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  cities,
+		"total": len(cities),
+	})
 }
 
 func GetLanguagesByCountry(c *gin.Context) {
-	idParam := c.Param("id")
-	countryID, err := strconv.Atoi(idParam)
+	countryID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
 		return
@@ -152,18 +152,19 @@ func GetLanguagesByCountry(c *gin.Context) {
 	var languages []models.Language
 	for rows.Next() {
 		var lang models.Language
-		err := rows.Scan(&lang.ID, &lang.Name, &lang.NativeName, &lang.ISOCode)
-		if err == nil {
+		if err := rows.Scan(&lang.ID, &lang.Name, &lang.NativeName, &lang.ISOCode); err == nil {
 			languages = append(languages, lang)
 		}
 	}
 
-	c.JSON(http.StatusOK, languages)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  languages,
+		"total": len(languages),
+	})
 }
 
 func GetCountryBorders(c *gin.Context) {
-	idParam := c.Param("id")
-	countryID, err := strconv.Atoi(idParam)
+	countryID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
 		return
@@ -186,11 +187,13 @@ func GetCountryBorders(c *gin.Context) {
 	var neighbors []models.Country
 	for rows.Next() {
 		var country models.Country
-		err := rows.Scan(&country.ID, &country.Name, &country.Capital)
-		if err == nil {
+		if err := rows.Scan(&country.ID, &country.Name, &country.Capital); err == nil {
 			neighbors = append(neighbors, country)
 		}
 	}
 
-	c.JSON(http.StatusOK, neighbors)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  neighbors,
+		"total": len(neighbors),
+	})
 }
