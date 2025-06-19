@@ -25,17 +25,17 @@ Soporta filtros y paginación para facilitar el consumo de datos en aplicaciones
 
 ## 📁 Estructura del proyecto
 
-go-open-data-api/
-├── cmd/ # Punto de entrada principal de la app
-│ └── main.go # Configuración de servidor y rutas
-├── config/ # Lógica de conexión a la base de datos y entorno
-├── controllers/ # Controladores por entidad (countries, cities, etc.)
-├── database/ # Inicialización y setup opcional de la base
-├── models/ # Modelos estructurados para JSON y SQL
-├── routes/ # Archivo(s) de rutas centralizados o modulares
-├── .env # Variables de entorno locales (PORT, DATABASE_URL, etc.)
-├── go.mod / go.sum # Dependencias del proyecto
-└── README.md # Este archivo
+- go-open-data-api/
+- ├── cmd/ # Punto de entrada principal de la app
+- │ └── main.go # Configuración de servidor y rutas
+- ├── config/ # Lógica de conexión a la base de datos y entorno
+- ├── controllers/ # Controladores por entidad (countries, cities, etc.)
+- ├── database/ # Inicialización y setup opcional de la base
+- ├── models/ # Modelos estructurados para JSON y SQL
+- ├── routes/ # Archivo(s) de rutas centralizados o modulares
+- ├── .env # Variables de entorno locales (PORT, DATABASE_URL, etc.)
+- ├── go.mod / go.sum # Dependencias del proyecto
+- └── README.md # Este archivo
 
 ## 📦 Endpoints implementados
 
