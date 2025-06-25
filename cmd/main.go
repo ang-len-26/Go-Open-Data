@@ -40,6 +40,9 @@ func main() {
 	routes.RegisterCurrencyRoutes(r)
 
 	// Iniciar el servidor
-	r.Run(":" + config.GetEnv("PORT"))
+	port := config.GetEnv("PORT")
+	if port == "" {
+		port = "10000"
+	}
 
 }
