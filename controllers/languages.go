@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/ang-len-26/go-open-data-api/config"
+	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/models"
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +14,7 @@ func GetLanguages(c *gin.Context) {
 		FROM languages
 		ORDER BY name ASC
 	`
-	rows, err := config.DB.Query(c.Request.Context(), query)
+	rows, err := database.DB.Query(c.Request.Context(), query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los idiomas", "details": err.Error()})
 		return
@@ -46,7 +46,7 @@ func GetLanguageByISO(c *gin.Context) {
 		WHERE iso_code = $1
 	`
 
-	err := config.DB.QueryRow(c.Request.Context(), query, iso).Scan(
+	err := database.DB.QueryRow(c.Request.Context(), query, iso).Scan(
 		&lang.ID, &lang.Name, &lang.NativeName, &lang.ISOCode,
 	)
 
@@ -70,7 +70,7 @@ func GetCountriesByLanguage(c *gin.Context) {
 		ORDER BY c.name ASC
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query, iso)
+	rows, err := database.DB.Query(c.Request.Context(), query, iso)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los países", "details": err.Error()})
 		return

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ang-len-26/go-open-data-api/config"
+	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/models"
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +41,7 @@ func GetCountries(c *gin.Context) {
 	// 1️⃣ Total count
 	countQuery := "SELECT COUNT(*) " + query
 	var total int
-	err := config.DB.QueryRow(c.Request.Context(), countQuery, args...).Scan(&total)
+	err := database.DB.QueryRow(c.Request.Context(), countQuery, args...).Scan(&total)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar resultados", "details": err.Error()})
 		return
@@ -57,7 +57,7 @@ func GetCountries(c *gin.Context) {
 	args = append(args, offset)
 
 	// Ejecutar la consulta
-	rows, err := config.DB.Query(c.Request.Context(), paginatedQuery, args...)
+	rows, err := database.DB.Query(c.Request.Context(), paginatedQuery, args...)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar la base de datos"})
 		return

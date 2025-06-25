@@ -19,7 +19,6 @@ func main() {
 	}
 
 	// Inicializa la conexión a la base de datos
-	config.InitDB()
 	database.Connect()
 
 	// Inicializar el router y registrar rutas
@@ -27,7 +26,7 @@ func main() {
 
 	// 👇 habilitar CORS para permitir peticiones desde el frontend
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"}, // solo tu frontend
+		AllowOrigins:     []string{"http://localhost:5173", "https://go-open-data.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

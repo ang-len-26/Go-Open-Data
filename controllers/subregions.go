@@ -3,13 +3,13 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/ang-len-26/go-open-data-api/config"
+	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/models"
 	"github.com/gin-gonic/gin"
 )
 
 func GetSubregions(c *gin.Context) {
-	rows, err := config.DB.Query(c.Request.Context(), `
+	rows, err := database.DB.Query(c.Request.Context(), `
 		SELECT id, name 
 		FROM subregions 
 		ORDER BY name ASC
@@ -45,7 +45,7 @@ func GetCountriesBySubregion(c *gin.Context) {
 		ORDER BY c.name ASC
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query, name)
+	rows, err := database.DB.Query(c.Request.Context(), query, name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener países de la subregión"})
 		return

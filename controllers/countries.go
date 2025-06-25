@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ang-len-26/go-open-data-api/config"
+	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/models"
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +36,7 @@ func GetCountryByID(c *gin.Context) {
 	WHERE c.id = $1
 	`
 
-	err = config.DB.QueryRow(c.Request.Context(), query, countryID).Scan(
+	err = database.DB.QueryRow(c.Request.Context(), query, countryID).Scan(
 		&detail.ID, &detail.Name, &detail.Capital, &detail.Population,
 		&detail.Area, &detail.Region, &detail.Subregion,
 	)
@@ -53,7 +53,7 @@ func GetCountryByID(c *gin.Context) {
 	JOIN country_languages cl ON cl.language_id = l.id
 	WHERE cl.country_id = $1
 	`
-	rows, _ := config.DB.Query(c.Request.Context(), langQuery, countryID)
+	rows, _ := database.DB.Query(c.Request.Context(), langQuery, countryID)
 	for rows.Next() {
 		var lang models.Language
 		rows.Scan(&lang.ID, &lang.Name, &lang.ISOCode, &lang.NativeName)
@@ -68,7 +68,7 @@ func GetCountryByID(c *gin.Context) {
 	JOIN country_currencies cc ON cc.currency_id = cu.id
 	WHERE cc.country_id = $1
 	`
-	rows, _ = config.DB.Query(c.Request.Context(), currQuery, countryID)
+	rows, _ = database.DB.Query(c.Request.Context(), currQuery, countryID)
 	for rows.Next() {
 		var cur models.Currency
 		rows.Scan(&cur.ID, &cur.Name, &cur.Code, &cur.Symbol)
@@ -82,7 +82,7 @@ func GetCountryByID(c *gin.Context) {
 	FROM cities
 	WHERE country_id = $1
 	`
-	rows, _ = config.DB.Query(c.Request.Context(), cityQuery, countryID)
+	rows, _ = database.DB.Query(c.Request.Context(), cityQuery, countryID)
 	for rows.Next() {
 		var city models.City
 		rows.Scan(&city.ID, &city.Name, &city.Population, &city.CountryID, &city.Latitude, &city.Longitude)
@@ -107,7 +107,7 @@ func GetCitiesByCountry(c *gin.Context) {
 		ORDER BY population DESC
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query, countryID)
+	rows, err := database.DB.Query(c.Request.Context(), query, countryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar ciudades"})
 		return
@@ -142,7 +142,7 @@ func GetLanguagesByCountry(c *gin.Context) {
 		WHERE cl.country_id = $1
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query, countryID)
+	rows, err := database.DB.Query(c.Request.Context(), query, countryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar idiomas"})
 		return
@@ -177,7 +177,7 @@ func GetCountryBorders(c *gin.Context) {
 		WHERE cb.country_id = $1
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query, countryID)
+	rows, err := database.DB.Query(c.Request.Context(), query, countryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar países fronterizos"})
 		return

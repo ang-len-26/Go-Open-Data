@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/ang-len-26/go-open-data-api/config"
+	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/models"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +15,7 @@ func GetCurrencies(c *gin.Context) {
 		ORDER BY name ASC
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query)
+	rows, err := database.DB.Query(c.Request.Context(), query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener las monedas", "details": err.Error()})
 		return
@@ -46,7 +46,7 @@ func GetCurrencyByCode(c *gin.Context) {
 		WHERE code = $1
 	`
 
-	err := config.DB.QueryRow(c.Request.Context(), query, code).Scan(
+	err := database.DB.QueryRow(c.Request.Context(), query, code).Scan(
 		&currency.ID, &currency.Name, &currency.Code, &currency.Symbol,
 	)
 
@@ -70,7 +70,7 @@ func GetCountriesByCurrency(c *gin.Context) {
 		ORDER BY c.name ASC
 	`
 
-	rows, err := config.DB.Query(c.Request.Context(), query, code)
+	rows, err := database.DB.Query(c.Request.Context(), query, code)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los países", "details": err.Error()})
 		return

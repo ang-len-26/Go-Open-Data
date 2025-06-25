@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ang-len-26/go-open-data-api/config"
+	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/models"
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +38,7 @@ func GetCities(c *gin.Context) {
 	// Conteo total
 	countQuery := "SELECT COUNT(*) " + query
 	var total int
-	err := config.DB.QueryRow(c.Request.Context(), countQuery, args...).Scan(&total)
+	err := database.DB.QueryRow(c.Request.Context(), countQuery, args...).Scan(&total)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al contar ciudades"})
 		return
@@ -54,7 +54,7 @@ func GetCities(c *gin.Context) {
 	query += " OFFSET $" + strconv.Itoa(argCount)
 	args = append(args, offset)
 
-	rows, err := config.DB.Query(c.Request.Context(), query, args...)
+	rows, err := database.DB.Query(c.Request.Context(), query, args...)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar ciudades"})
 		return
@@ -93,7 +93,7 @@ func GetCityByID(c *gin.Context) {
 	`
 
 	var city models.City
-	err = config.DB.QueryRow(c.Request.Context(), query, id).Scan(
+	err = database.DB.QueryRow(c.Request.Context(), query, id).Scan(
 		&city.ID, &city.Name, &city.Population, &city.Latitude, &city.Longitude, &city.CountryID,
 	)
 	if err != nil {
