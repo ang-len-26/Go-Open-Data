@@ -42,7 +42,8 @@ func main() {
 	// Iniciar el servidor
 	port := config.GetEnv("PORT")
 	if port == "" {
-		port = "10000"
+		port = "8080" // valor por defecto para desarrollo local
 	}
+	r.Run(":" + port)
 
 }
