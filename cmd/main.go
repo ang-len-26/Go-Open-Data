@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/ang-len-26/go-open-data-api/config"
 	"github.com/ang-len-26/go-open-data-api/database"
@@ -12,19 +13,18 @@ import (
 )
 
 func main() {
-	// Carga el archivo .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error cargando el archivo .env")
+	// Solo carga .env si estás en desarrollo local
+	if os.Getenv("RENDER") == "" {
+		_ = godotenv.Load()
 	}
 
-	// Inicializa la conexión a la base de datos
+	// Conexión a DB
 	database.Connect()
 
-	// Inicializar el router y registrar rutas
+	// Router
 	r := gin.Default()
 
-	// 👇 habilitar CORS para permitir peticiones desde el frontend
+	// CORS
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173", "https://go-open-data.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
@@ -33,17 +33,19 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	// Rutas
 	routes.RegisterCountryRoutes(r)
 	routes.RegisterCityRoutes(r)
 	routes.RegisterRegionRoutes(r)
 	routes.RegisterLanguageRoutes(r)
 	routes.RegisterCurrencyRoutes(r)
 
-	// Iniciar el servidor
+	// Puerto (Render define automáticamente la variable PORT)
 	port := config.GetEnv("PORT")
 	if port == "" {
-		port = "8080" // valor por defecto para desarrollo local
+		port = "8080"
 	}
-	r.Run(":" + port)
 
+	log.Printf("🚀 Servidor escuchando en el puerto %s", port)
+	r.Run(":" + port)
 }
