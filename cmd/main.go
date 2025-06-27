@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/ang-len-26/go-open-data-api/config"
 	"github.com/ang-len-26/go-open-data-api/database"
 	"github.com/ang-len-26/go-open-data-api/routes"
 	"github.com/gin-contrib/cors"
@@ -41,9 +40,12 @@ func main() {
 	routes.RegisterCurrencyRoutes(r)
 
 	// Puerto (Render define automáticamente la variable PORT)
-	port := config.GetEnv("PORT")
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
+	}
+	if err := r.Run(":" + port); err != nil {
+		log.Panicf("error: %s", err)
 	}
 
 	log.Printf("🚀 Servidor escuchando en el puerto %s", port)
