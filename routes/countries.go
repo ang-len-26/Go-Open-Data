@@ -13,7 +13,5 @@ func RegisterCountryRoutes(r *gin.Engine) {
 		api.GET("/countries", controllers.GetCountries)
 		api.GET("/countries/:id", controllers.GetCountryByID)
 		api.GET("/countries/:id/cities", controllers.GetCitiesByCountry)
-		api.GET("/cities", controllers.GetCities)
-		api.GET("/cities/:id", controllers.GetCityByID)
 	}
 }
